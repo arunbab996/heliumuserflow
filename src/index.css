@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    background-color: #F7F5F0;
+    color: #0f1e1e;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, .serif {
+    font-family: 'Cormorant Garamond', Georgia, Cambria, 'Palatino Linotype', serif;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   MOROCCAN / ISLAMIC GEOMETRIC PATTERN
+   Two-layer offset 4-petal flower lattice.
+   Layer 1: flowers on a 60×60 grid
+   Layer 2: same flowers offset by (30,30) — the offset
+   causes petals from all four neighbours to converge
+   at every intersection, forming an 8-fold star effect.
+   Colour: warm gold on cream, very subtle opacity.
+   ═══════════════════════════════════════════════════════ */
+.pattern-bg {
+  background-color: #F7F5F0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath fill='none' stroke='rgba(190,155,80,0.22)' stroke-width='1.1' stroke-linecap='round' d='M30,30 C14,30 14,0 30,0 C46,0 46,30 30,30 M30,30 C30,14 60,14 60,30 C60,46 30,46 30,30 M30,30 C46,30 46,60 30,60 C14,60 14,30 30,30 M30,30 C30,46 0,46 0,30 C0,14 30,14 30,30'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath fill='none' stroke='rgba(190,155,80,0.13)' stroke-width='0.9' stroke-linecap='round' d='M30,30 C14,30 14,0 30,0 C46,0 46,30 30,30 M30,30 C30,14 60,14 60,30 C60,46 30,46 30,30 M30,30 C46,30 46,60 30,60 C14,60 14,30 30,30 M30,30 C30,46 0,46 0,30 C0,14 30,14 30,30'/%3E%3C/svg%3E");
+  background-size: 60px 60px, 60px 60px;
+  background-position: 0px 0px, 30px 30px;
+}
+
+/* ── Leaflet ──────────────────────────── */
+.leaflet-container { width:100%; height:100%; background:#e8e4dc; }
+.leaflet-popup-content-wrapper {
+  border-radius: 14px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.14) !important;
+  padding: 0 !important; overflow: hidden;
+}
+.leaflet-popup-content { margin: 0 !important; }
+.leaflet-popup-tip-container { display: none; }
+
+/* ── Misc ─────────────────────────────── */
+select { -webkit-appearance: none; appearance: none; }
+html  { scroll-behavior: smooth; }
+.section-anchor { scroll-margin-top: 128px; }
+
+/* ── Scrollbar ────────────────────────── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c5bfb5; border-radius: 2px; }
+
+/* ── Fade-in on search transition ─────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* ── Floating search bar slide-in ─────── */
+@keyframes slideInDown {
+  from { opacity: 0; transform: translateY(-14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.search-bar-enter {
+  animation: slideInDown 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ── Search page full-screen entrance ─── */
+@keyframes searchPageIn {
+  from { opacity: 0; transform: translateY(40px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+.search-page-enter {
+  animation: searchPageIn 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* ── Orbit ring animations ────────────── */
+@keyframes spinCW  { to { transform: rotate(360deg);  } }
+@keyframes spinCCW { to { transform: rotate(-360deg); } }
+
+/* ── Hide scrollbar utility ──────────── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Reviews marquee ─────────────────── */
+@keyframes marqueeLeft  { from { transform: translateX(0); }    to { transform: translateX(-50%); } }
+@keyframes marqueeRight { from { transform: translateX(-50%); } to { transform: translateX(0); }    }
+.marquee-left  { animation: marqueeLeft  55s linear infinite; display: flex; gap: 1rem; width: max-content; }
+.marquee-right { animation: marqueeRight 60s linear infinite; display: flex; gap: 1rem; width: max-content; }
+.marquee-left:hover, .marquee-right:hover { animation-play-state: paused; }
