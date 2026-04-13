@@ -100,25 +100,38 @@ const REVIEWS = [
   { name: 'Pranoy & Debangshee', text: 'Helium helped us avoid paying a huge security deposit upfront. Saving almost ₹2L made the decision much easier.' },
 ]
 
+function loadSearchState() {
+  try {
+    const s = JSON.parse(sessionStorage.getItem('hf_search_state') || 'null')
+    return s || null
+  } catch { return null }
+}
+
 export default function HomePage() {
   const navigate = useNavigate()
 
-  const [location, setLocation] = useState('all')
-  const [locationText, setLocationText] = useState('')
+  const _s = loadSearchState()
+
+  const [location, setLocation] = useState(_s?.location ?? 'all')
+  const [locationText, setLocationText] = useState(_s?.locationText ?? '')
   const [locationFocus, setLocationFocus] = useState(false)
-  const [layout, setLayout] = useState('all')
-  const [moveIn, setMoveIn] = useState('any')
-  const [moveInDate, setMoveInDate] = useState('')
-  const [query, setQuery] = useState('')
-  const [describeActive, setDescribeActive] = useState(false)
-  const [results, setResults] = useState(null)
-  const [searchLabel, setSearchLabel] = useState('')
-  const [showMap, setShowMap] = useState(true)
-  const [selectedId, setSelectedId] = useState(null)
-  const [rfLocation, setRfLocation] = useState('all')
-  const [rfLayout, setRfLayout] = useState('all')
-  const [rfAvail, setRfAvail] = useState('any')
-  const [priceRange, setPriceRange] = useState([SLIDER_MIN, SLIDER_MAX])
+  const [layout, setLayout] = useState(_s?.layout ?? 'all')
+  const [moveIn, setMoveIn] = useState(_s?.moveIn ?? 'any')
+  const [moveInDate, setMoveInDate] = useState(_s?.moveInDate ?? '')
+  const [query, setQuery] = useState(_s?.query ?? '')
+  const [describeActive, setDescribeActive] = useState(_s?.describeActive ?? false)
+  const [results, setResults] = useState(() => {
+    if (!_s?.resultIds) return null
+    return LISTINGS.filter(l => _s.resultIds.includes(l.id))
+      .sort((a, b) => _s.resultIds.indexOf(a.id) - _s.resultIds.indexOf(b.id))
+  })
+  const [searchLabel, setSearchLabel] = useState(_s?.searchLabel ?? '')
+  const [showMap, setShowMap] = useState(_s?.showMap ?? true)
+  const [selectedId, setSelectedId] = useState(_s?.selectedId ?? null)
+  const [rfLocation, setRfLocation] = useState(_s?.rfLocation ?? 'all')
+  const [rfLayout, setRfLayout] = useState(_s?.rfLayout ?? 'all')
+  const [rfAvail, setRfAvail] = useState(_s?.rfAvail ?? 'any')
+  const [priceRange, setPriceRange] = useState(_s?.priceRange ?? [SLIDER_MIN, SLIDER_MAX])
   const [savedSearches, setSavedSearches] = useState(() => {
     try { return JSON.parse(localStorage.getItem('hf_saved_searches') || '[]') }
     catch { return [] }
@@ -128,21 +141,31 @@ export default function HomePage() {
 
   const handleSearch = () => {
     let matched
+    let label
     if (describeActive) {
       const q = query.trim()
       if (!q) return
       matched = semanticMatch(q)
+      label = q
       setSearchLabel(q)
     } else {
       matched = filterMatch({ location, layout, moveIn })
       const locLabel = location === 'all' ? 'All areas' : AREAS.find(a => a.v === location)?.l || location
       const layLabel = layout === 'all' ? 'Any layout' : layout
-      setSearchLabel(`${locLabel} · ${layLabel}`)
+      label = `${locLabel} · ${layLabel}`
+      setSearchLabel(label)
     }
     setResults(matched)
     setRfLocation(location)
     setRfLayout(layout)
     setRfAvail(moveIn)
+    sessionStorage.setItem('hf_search_state', JSON.stringify({
+      location, locationText, layout, moveIn, moveInDate, query, describeActive,
+      resultIds: matched.map(l => l.id),
+      searchLabel: label,
+      showMap, selectedId,
+      rfLocation: location, rfLayout: layout, rfAvail: moveIn, priceRange,
+    }))
     window.scrollTo(0, 0)
   }
 
@@ -150,6 +173,7 @@ export default function HomePage() {
     setResults(null)
     setSearchLabel('')
     setQuery('')
+    sessionStorage.removeItem('hf_search_state')
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -180,6 +204,7 @@ export default function HomePage() {
     const updated = [...savedSearches, search]
     setSavedSearches(updated)
     localStorage.setItem('hf_saved_searches', JSON.stringify(updated))
+    window.dispatchEvent(new Event('hf_saved_searches_updated'))
     setSavedMsg(true)
     setShowSaved(true)
     setTimeout(() => setSavedMsg(false), 2000)
@@ -189,6 +214,7 @@ export default function HomePage() {
     const updated = savedSearches.filter(s => s.id !== id)
     setSavedSearches(updated)
     localStorage.setItem('hf_saved_searches', JSON.stringify(updated))
+    window.dispatchEvent(new Event('hf_saved_searches_updated'))
   }
 
   const applySearch = (s) => {
@@ -364,12 +390,12 @@ export default function HomePage() {
             className="text-[52px] md:text-[70px] font-light text-[#004449] leading-[1.02] tracking-tight mb-5"
             style={{ fontFamily: "'Cormorant Garamond', serif" }}
           >
-            The right home,<br />
-            <em className="font-semibold italic" style={{ background: 'linear-gradient(135deg, #0D9488 0%, #059669 60%, #0ea5e9 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>found faster.</em>
+            The best homes<br />
+            <em className="font-semibold italic" style={{ background: 'linear-gradient(135deg, #0D9488 0%, #059669 60%, #0ea5e9 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>are here.</em>
           </h1>
 
           <p className="text-base text-stone-500 leading-relaxed mb-10 max-w-sm mx-auto">
-            Curated, verified rentals inside the finest gated societies. No brokers. No outdated listings. Just homes worth living in.
+            Curated, verified rentals inside the finest gated societies.
           </p>
 
           {/* ── Search bar ── */}

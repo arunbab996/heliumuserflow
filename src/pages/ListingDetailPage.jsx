@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import {
   ArrowLeft, Bookmark, Phone, Calendar,
   Zap, Wind, Volume2, Sun, ChevronRight,
@@ -198,6 +198,7 @@ function QualityGauge({ score, color, Icon, label }) {
 export default function ListingDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const listing = LISTINGS.find(l => String(l.id) === id)
   const similarHomes = LISTINGS.filter(l => l.neighborhood === listing?.neighborhood && String(l.id) !== id).slice(0, 2)
   const listingIndex = LISTINGS.findIndex(l => String(l.id) === id)
@@ -241,9 +242,19 @@ export default function ListingDetailPage() {
       {/* ── Top nav ───────────────────────────────────────────── */}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-100">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-5 md:px-8 h-14">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-stone-500 hover:text-stone-900 text-sm font-medium transition-colors">
-            <ArrowLeft size={15} /> Back
-          </button>
+          <div className="flex items-center gap-4">
+            <button onClick={() => location.key !== 'default' ? navigate(-1) : navigate('/')} className="flex items-center gap-2 text-stone-500 hover:text-stone-900 text-sm font-medium transition-colors">
+              <ArrowLeft size={15} /> Back
+            </button>
+            <Link to="/" className="hidden md:flex items-center shrink-0">
+              <img
+                src="https://heliumhomes.in/logos/logo_helium_dark.svg"
+                alt="Helium"
+                className="h-5 opacity-60 hover:opacity-100 transition-opacity"
+                onError={e => { e.target.style.display = 'none' }}
+              />
+            </Link>
+          </div>
           <div className="hidden md:flex items-center gap-1">
             {SECTIONS.map(s => (
               <button key={s} onClick={() => scrollTo(s)}
