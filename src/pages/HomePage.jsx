@@ -266,10 +266,10 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Sticky filter bar — stays pinned below the navbar while scrolling */}
-        <div className="sticky top-[58px] z-40 bg-[#004449] px-3 md:px-8 py-2 border-b border-white/10">
-          <div className="max-w-5xl mx-auto">
-            <div className="bg-white/[0.07] rounded-2xl px-3 py-2 flex items-center gap-1.5">
+        {/* Sticky filter bar — only the pill card floats, no full-width background */}
+        <div className="sticky top-[58px] z-40 px-3 md:px-8 py-2 pointer-events-none">
+          <div className="max-w-5xl mx-auto pointer-events-auto">
+            <div className="bg-[#004449] rounded-2xl shadow-[0_6px_24px_rgba(0,68,73,0.35)] px-3 py-2 flex items-center gap-1.5">
 
               {/* Filter pills — Area, Layout, When (scrollable) + Price (outside overflow to avoid clip) */}
               <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
