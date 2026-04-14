@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Search, Sparkles, ChevronDown, Map, LayoutGrid, X, ArrowRight, CheckCircle, BadgeCheck, CalendarCheck, Banknote, MapPin, BookmarkPlus, Bell } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import MapView from '../components/MapView'
@@ -109,8 +109,12 @@ function loadSearchState() {
 
 export default function HomePage() {
   const navigate = useNavigate()
+  const location = useLocation()
 
-  const _s = loadSearchState()
+  // Only restore search state when navigating back (not on fresh page load)
+  const isBack = location.key !== 'default'
+  const _s = isBack ? loadSearchState() : null
+  if (!isBack) sessionStorage.removeItem('hf_search_state')
 
   const [location, setLocation] = useState(_s?.location ?? 'all')
   const [locationText, setLocationText] = useState(_s?.locationText ?? '')

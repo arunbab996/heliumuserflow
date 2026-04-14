@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Bookmark, BedDouble, Maximize2, Compass, TrendingUp, Users, ArrowRight, Zap } from 'lucide-react'
+import { Bookmark, BedDouble, Maximize2, Compass, TrendingUp, Users, ArrowRight, Zap, Flame } from 'lucide-react'
 import { formatRentFull } from '../data/listings'
 import { useBookmarks } from '../context/BookmarksContext'
 
@@ -65,6 +65,14 @@ export default function ListingCard({ listing }) {
               {status.label}
             </span>
           </div>
+
+          {/* Popular Property badge — top right */}
+          {listing.popular && !isOccupied && (
+            <div className="absolute top-3 right-3 flex items-center gap-1 bg-amber-500 text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wide shadow-sm">
+              <Flame size={9} className="shrink-0" />
+              Popular
+            </div>
+          )}
 
           {/* Bookmark — top right, revealed on hover or when saved */}
           {!isOccupied && (

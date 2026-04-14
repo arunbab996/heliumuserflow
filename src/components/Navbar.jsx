@@ -90,8 +90,8 @@ export default function Navbar({ variant = 'home' }) {
                   backdropFilter: 'blur(12px)',
                 }}
               >
-                <span className="w-6 h-6 rounded-full bg-[#004449] flex items-center justify-center text-white text-[10px] font-bold shrink-0">A</span>
-                <span className="text-sm font-semibold text-[#004449] pr-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Hi, Arun</span>
+                <span className="w-6 h-6 rounded-full bg-[#004449] flex items-center justify-center text-white text-[10px] font-bold shrink-0">S</span>
+                <span className="text-sm font-semibold text-[#004449] pr-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Hi, Sahil</span>
                 {(bookmarks.size > 0 || searches.length > 0) && (
                   <span className="w-4 h-4 rounded-full bg-[#0D9488] text-white text-[9px] font-bold flex items-center justify-center">
                     {bookmarks.size + searches.length}
