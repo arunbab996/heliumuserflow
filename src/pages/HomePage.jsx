@@ -183,14 +183,18 @@ export default function HomePage() {
 
   const filteredResults = useMemo(() => {
     if (!results) return null
-    return results.filter(l => {
+    // AI mode: filter the ranked subset. Filter mode: always query the full pool
+    // so changing Area/Layout in the floating bar never returns 0 from a stale base.
+    const base = describeActive ? results : LISTINGS
+    return base.filter(l => {
+      if (l.status === 'occupied') return false
       if (rfLocation !== 'all' && l.neighborhood !== rfLocation) return false
       if (rfLayout !== 'all' && l.bhk !== rfLayout) return false
       if (rfAvail === 'now' && l.status !== 'available') return false
       if (l.rent < priceRange[0] || l.rent > priceRange[1]) return false
       return true
     })
-  }, [results, rfLocation, rfLayout, rfAvail, priceRange])
+  }, [results, describeActive, rfLocation, rfLayout, rfAvail, priceRange])
 
   const saveSearch = () => {
     const locLabel = rfLocation === 'all' ? 'Anywhere' : AREAS.find(a => a.v === rfLocation)?.l || rfLocation
@@ -235,62 +239,77 @@ export default function HomePage() {
       <div className="min-h-screen bg-stone-50" style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <Navbar variant="home" />
 
-        {/* Floating filter panel */}
-        <div className="fixed top-[58px] left-0 right-0 z-40 px-4 md:px-10 py-2.5 pointer-events-none">
-          <div className="max-w-4xl mx-auto pointer-events-auto search-bar-enter space-y-2">
-            <div className="bg-[#004449] rounded-2xl shadow-2xl shadow-[#004449]/40 px-4 py-3 flex items-center gap-3 backdrop-blur-sm">
-              <div className="flex items-center gap-1.5 shrink-0">
+        {/* Floating filter bar */}
+        <div className="fixed top-[58px] left-0 right-0 z-40 px-4 md:px-8 py-2 pointer-events-none">
+          <div className="max-w-5xl mx-auto pointer-events-auto search-bar-enter space-y-2">
+            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-stone-200/80 px-3 py-2 flex items-center gap-2">
+
+              {/* Live indicator */}
+              <div className="flex items-center gap-1.5 shrink-0 pl-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#0D9488] animate-pulse" />
-                <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest hidden sm:block">Search</span>
+                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest hidden md:block">Search</span>
               </div>
-              <div className="w-px h-5 bg-white/10 shrink-0" />
-              <div className="flex items-center gap-2 flex-1 overflow-x-auto no-scrollbar">
-                <DarkFilter label="Area" value={rfLocation} onChange={setRfLocation} options={[
+
+              <div className="w-px h-4 bg-stone-200 shrink-0" />
+
+              {/* Filter pills */}
+              <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
+                <FilterPill label="Area"   value={rfLocation} onChange={setRfLocation} options={[
                   { v:'all', l:'Anywhere' }, { v:'whitefield', l:'Whitefield' },
                   { v:'varthur', l:'Varthur' }, { v:'hoodi', l:'Hoodi' }, { v:'panathur', l:'Panathur' },
                 ]} />
-                <DarkFilter label="Layout" value={rfLayout} onChange={setRfLayout} options={[
-                  { v:'all', l:'Any' }, { v:'2 BHK', l:'2 BHK' },
-                  { v:'3 BHK', l:'3 BHK' }, { v:'4 BHK', l:'4 BHK' },
+                <FilterPill label="Layout" value={rfLayout}   onChange={setRfLayout}   options={[
+                  { v:'all', l:'Any' }, { v:'2 BHK', l:'2 BHK' }, { v:'3 BHK', l:'3 BHK' }, { v:'4 BHK', l:'4 BHK' },
                 ]} />
-                <DarkFilter label="When" value={rfAvail} onChange={setRfAvail} options={MOVEIN_OPTIONS} />
-              </div>
-              <div className="w-px h-5 bg-white/10 shrink-0" />
-              <div className="flex items-center gap-2 shrink-0">
+                <FilterPill label="When"   value={rfAvail}    onChange={setRfAvail}    options={MOVEIN_OPTIONS} />
                 <PriceFilter priceRange={priceRange} onChange={setPriceRange} />
-                <button
-                  onClick={saveSearch}
-                  title="Save this search"
-                  className={`flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all ${savedMsg ? 'bg-[#0D9488]/20 text-[#0D9488] border border-[#0D9488]/30' : 'bg-white/[0.07] border border-white/10 text-white/50 hover:text-white/80 hover:bg-white/12'}`}
-                >
+              </div>
+
+              <div className="w-px h-4 bg-stone-200 shrink-0" />
+
+              {/* Right controls */}
+              <div className="flex items-center gap-1.5 shrink-0">
+                {/* Home count */}
+                <span className="text-xs font-bold text-[#004449] bg-[#004449]/[0.07] px-2.5 py-1 rounded-lg hidden sm:block">
+                  {(filteredResults || []).length} homes
+                </span>
+
+                {/* Save search */}
+                <button onClick={saveSearch} title="Save search"
+                  className={`flex items-center gap-1 text-[10px] font-bold px-2.5 py-1.5 rounded-lg border transition-all ${savedMsg ? 'bg-[#0D9488]/10 text-[#0D9488] border-[#0D9488]/30' : 'bg-stone-50 border-stone-200 text-stone-400 hover:text-[#004449] hover:border-stone-300'}`}>
                   <BookmarkPlus size={11} />
                   <span className="hidden sm:block">{savedMsg ? 'Saved!' : 'Save'}</span>
                 </button>
+
+                {/* Saved searches bell */}
                 {savedSearches.length > 0 && (
-                  <button
-                    onClick={() => setShowSaved(!showSaved)}
-                    className={`flex items-center gap-1 text-[10px] font-bold px-2.5 py-1.5 rounded-lg transition-all ${showSaved ? 'bg-white/15 text-white border border-white/20' : 'bg-white/[0.07] border border-white/10 text-white/50 hover:text-white/80 hover:bg-white/12'}`}
-                  >
+                  <button onClick={() => setShowSaved(!showSaved)}
+                    className={`relative flex items-center gap-1 text-[10px] font-bold px-2.5 py-1.5 rounded-lg border transition-all ${showSaved ? 'bg-[#004449] text-white border-[#004449]' : 'bg-stone-50 border-stone-200 text-stone-400 hover:text-[#004449] hover:border-stone-300'}`}>
                     <Bell size={11} />
                     <span className="w-4 h-4 rounded-full bg-[#0D9488] text-white text-[8px] font-bold flex items-center justify-center">{savedSearches.length}</span>
                   </button>
                 )}
-                <span className="text-xs font-semibold text-white/60 hidden sm:block">
-                  {(filteredResults || []).length} home{(filteredResults || []).length !== 1 ? 's' : ''}
-                </span>
-                <button onClick={() => setShowMap(!showMap)} className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${showMap ? 'bg-white/15 text-white' : 'text-white/40 hover:text-white/70'}`}>
-                  {showMap ? <LayoutGrid size={11} /> : <Map size={11} />}
-                  <span className="hidden sm:block">{showMap ? 'Grid' : 'Map'}</span>
-                </button>
+
+                {/* Map / Grid toggle */}
+                <div className="flex items-center bg-stone-100 rounded-lg p-0.5">
+                  <button onClick={() => setShowMap(true)}
+                    className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
+                    <Map size={11} /><span className="hidden sm:block">Map</span>
+                  </button>
+                  <button onClick={() => setShowMap(false)}
+                    className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
+                    <LayoutGrid size={11} /><span className="hidden sm:block">Grid</span>
+                  </button>
+                </div>
               </div>
             </div>
 
             {/* Saved Searches panel */}
             {showSaved && savedSearches.length > 0 && (
-              <div className="bg-[#002a2f] border border-white/10 rounded-xl shadow-2xl p-3">
+              <div className="bg-white border border-stone-200 rounded-xl shadow-xl p-3">
                 <div className="flex items-center justify-between mb-2.5">
-                  <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Saved Searches</p>
-                  <button onClick={() => setShowSaved(false)} className="text-white/25 hover:text-white/60 transition-colors">
+                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Saved Searches</p>
+                  <button onClick={() => setShowSaved(false)} className="text-stone-300 hover:text-stone-500 transition-colors">
                     <X size={11} />
                   </button>
                 </div>
@@ -781,20 +800,20 @@ function GreenSelect({ label, value, onChange, options }) {
   )
 }
 
-function DarkFilter({ label, value, onChange, options }) {
+function FilterPill({ label, value, onChange, options }) {
   const isActive = value !== options[0].v
   return (
-    <div className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 cursor-pointer transition-all shrink-0 ${isActive ? 'bg-white/15 border border-white/25' : 'bg-white/[0.07] border border-white/10 hover:bg-white/12'}`}>
-      <span className={`text-[10px] font-semibold ${isActive ? 'text-white/60' : 'text-white/35'}`}>{label}:</span>
+    <div className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 cursor-pointer transition-all shrink-0 border ${isActive ? 'bg-[#004449] border-[#004449]' : 'bg-stone-50 border-stone-200 hover:border-stone-300'}`}>
+      <span className={`text-[10px] font-semibold ${isActive ? 'text-white/60' : 'text-stone-400'}`}>{label}:</span>
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        className={`bg-transparent text-[10px] font-bold outline-none cursor-pointer ${isActive ? 'text-white' : 'text-white/55'}`}
+        className={`bg-transparent text-[10px] font-bold outline-none cursor-pointer ${isActive ? 'text-white' : 'text-stone-700'}`}
         style={{ appearance: 'none' }}
       >
         {options.map(o => <option key={o.v} value={o.v} className="text-stone-900 bg-white">{o.l}</option>)}
       </select>
-      <ChevronDown size={8} className={isActive ? 'text-white/40' : 'text-white/20'} />
+      <ChevronDown size={8} className={isActive ? 'text-white/50' : 'text-stone-300'} />
     </div>
   )
 }
@@ -807,12 +826,12 @@ function PriceRangeSlider({ minVal, maxVal, onMinChange, onMaxChange }) {
   return (
     <div className="px-1 pt-2 pb-1">
       <div className="flex justify-between mb-3">
-        <span className="text-[11px] font-bold text-white">{fmtK(minVal)}</span>
-        <span className="text-[10px] text-white/35 font-medium">to</span>
-        <span className="text-[11px] font-bold text-white">{fmtK(maxVal)}</span>
+        <span className="text-[11px] font-bold text-[#004449]">{fmtK(minVal)}</span>
+        <span className="text-[10px] text-stone-400 font-medium">to</span>
+        <span className="text-[11px] font-bold text-[#004449]">{fmtK(maxVal)}</span>
       </div>
       <div className="relative h-5">
-        <div className="absolute top-[8px] left-0 right-0 h-1.5 bg-white/15 rounded-full" />
+        <div className="absolute top-[8px] left-0 right-0 h-1.5 bg-stone-200 rounded-full" />
         <div
           className="absolute top-[8px] h-1.5 bg-[#0D9488] rounded-full"
           style={{ left: `${minPct}%`, right: `${100 - maxPct}%` }}
@@ -830,7 +849,7 @@ function PriceRangeSlider({ minVal, maxVal, onMinChange, onMaxChange }) {
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           style={{ zIndex: 4 }} />
       </div>
-      <div className="flex justify-between mt-1.5 text-[9px] text-white/20 font-medium">
+      <div className="flex justify-between mt-1.5 text-[9px] text-stone-300 font-medium">
         <span>₹20K</span><span>₹3L</span>
       </div>
     </div>
@@ -854,16 +873,16 @@ function PriceFilter({ priceRange, onChange }) {
     <div ref={ref} className="relative shrink-0">
       <div
         onClick={() => setOpen(!open)}
-        className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 cursor-pointer transition-all ${isFiltered ? 'bg-white/15 border border-white/25' : 'bg-white/[0.07] border border-white/10 hover:bg-white/12'}`}
+        className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 cursor-pointer transition-all border ${isFiltered ? 'bg-[#004449] border-[#004449]' : 'bg-stone-50 border-stone-200 hover:border-stone-300'}`}
       >
-        <span className={`text-[10px] font-semibold ${isFiltered ? 'text-white/60' : 'text-white/35'}`}>Price:</span>
-        <span className={`text-[10px] font-bold ${isFiltered ? 'text-white' : 'text-white/55'}`}>
+        <span className={`text-[10px] font-semibold ${isFiltered ? 'text-white/60' : 'text-stone-400'}`}>Price:</span>
+        <span className={`text-[10px] font-bold ${isFiltered ? 'text-white' : 'text-stone-700'}`}>
           {isFiltered ? `${fmtK(minVal)}–${fmtK(maxVal)}` : 'Any'}
         </span>
-        <ChevronDown size={8} className={isFiltered ? 'text-white/40' : 'text-white/20'} />
+        <ChevronDown size={8} className={isFiltered ? 'text-white/50' : 'text-stone-300'} />
       </div>
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 w-52 bg-[#003337] border border-white/10 rounded-xl shadow-2xl z-[60] p-3">
+        <div className="absolute top-full left-0 mt-1.5 w-52 bg-white border border-stone-200 rounded-xl shadow-xl z-[60] p-3">
           <PriceRangeSlider
             minVal={minVal} maxVal={maxVal}
             onMinChange={min => onChange([min, maxVal])}
@@ -872,7 +891,7 @@ function PriceFilter({ priceRange, onChange }) {
           {isFiltered && (
             <button
               onClick={() => { onChange([SLIDER_MIN, SLIDER_MAX]); setOpen(false) }}
-              className="w-full text-center text-[9px] font-semibold text-white/35 hover:text-white/60 mt-1 py-1 transition-colors"
+              className="w-full text-center text-[9px] font-semibold text-stone-400 hover:text-stone-600 mt-1 py-1 transition-colors"
             >
               Reset to any price
             </button>
