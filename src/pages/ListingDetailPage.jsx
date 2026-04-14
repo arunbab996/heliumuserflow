@@ -687,7 +687,7 @@ export default function ListingDetailPage() {
 
               <div className="px-5 pb-4 flex items-center gap-1.5 text-[11px] text-stone-400">
                 <CheckCircle2 size={11} className="text-[#0D9488]" />
-                Verified listing · No brokerage
+                Verified listing
               </div>
             </div>
 
