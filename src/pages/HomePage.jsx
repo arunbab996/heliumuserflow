@@ -240,19 +240,22 @@ export default function HomePage() {
         <Navbar variant="home" />
 
         {/* Floating filter bar */}
-        <div className="fixed top-[58px] left-0 right-0 z-40 px-4 md:px-8 py-2 pointer-events-none">
+        <div className="fixed top-[58px] left-0 right-0 z-40 px-4 md:px-8 py-2.5 pointer-events-none">
           <div className="max-w-5xl mx-auto pointer-events-auto search-bar-enter space-y-2">
-            <div className="bg-white/95 backdrop-blur-md rounded-2xl shadow-lg border border-stone-200/80 px-3 py-2 flex items-center gap-2">
+            <div className="bg-white/98 backdrop-blur-md rounded-2xl shadow-[0_4px_24px_rgba(0,68,73,0.10)] border border-stone-200/70 px-4 py-2.5 flex items-center gap-3">
 
-              {/* Live indicator */}
-              <div className="flex items-center gap-1.5 shrink-0 pl-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#0D9488] animate-pulse" />
-                <span className="text-[10px] font-bold text-stone-400 uppercase tracking-widest hidden md:block">Search</span>
+              {/* Live count — left anchor */}
+              <div className="flex items-center gap-2.5 shrink-0">
+                <span className="w-2 h-2 rounded-full bg-[#0D9488] animate-pulse shrink-0" />
+                <div className="hidden md:block">
+                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest leading-none mb-0.5">Live</p>
+                  <p className="text-sm font-bold text-[#004449] leading-none">{(filteredResults || []).length} homes</p>
+                </div>
               </div>
 
-              <div className="w-px h-4 bg-stone-200 shrink-0" />
+              <div className="w-px h-8 bg-stone-150 shrink-0" style={{ backgroundColor: '#e7e5e4' }} />
 
-              {/* Filter pills */}
+              {/* Filter pills — two-line: label above, value below */}
               <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
                 <FilterPill label="Area"   value={rfLocation} onChange={setRfLocation} options={[
                   { v:'all', l:'Anywhere' }, { v:'whitefield', l:'Whitefield' },
@@ -265,40 +268,36 @@ export default function HomePage() {
                 <PriceFilter priceRange={priceRange} onChange={setPriceRange} />
               </div>
 
-              <div className="w-px h-4 bg-stone-200 shrink-0" />
+              <div className="w-px h-8 shrink-0" style={{ backgroundColor: '#e7e5e4' }} />
 
-              {/* Right controls */}
-              <div className="flex items-center gap-1.5 shrink-0">
-                {/* Home count */}
-                <span className="text-xs font-bold text-[#004449] bg-[#004449]/[0.07] px-2.5 py-1 rounded-lg hidden sm:block">
-                  {(filteredResults || []).length} homes
-                </span>
+              {/* Right actions */}
+              <div className="flex items-center gap-2 shrink-0">
 
                 {/* Save search */}
-                <button onClick={saveSearch} title="Save search"
-                  className={`flex items-center gap-1 text-[10px] font-bold px-2.5 py-1.5 rounded-lg border transition-all ${savedMsg ? 'bg-[#0D9488]/10 text-[#0D9488] border-[#0D9488]/30' : 'bg-stone-50 border-stone-200 text-stone-400 hover:text-[#004449] hover:border-stone-300'}`}>
-                  <BookmarkPlus size={11} />
+                <button onClick={saveSearch}
+                  className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all ${savedMsg ? 'bg-[#0D9488]/10 text-[#0D9488] border-[#0D9488]/25' : 'border-stone-200 text-stone-500 hover:border-[#004449]/30 hover:text-[#004449] hover:bg-[#004449]/[0.04]'}`}>
+                  <BookmarkPlus size={13} />
                   <span className="hidden sm:block">{savedMsg ? 'Saved!' : 'Save'}</span>
                 </button>
 
-                {/* Saved searches bell */}
+                {/* Saved searches */}
                 {savedSearches.length > 0 && (
                   <button onClick={() => setShowSaved(!showSaved)}
-                    className={`relative flex items-center gap-1 text-[10px] font-bold px-2.5 py-1.5 rounded-lg border transition-all ${showSaved ? 'bg-[#004449] text-white border-[#004449]' : 'bg-stone-50 border-stone-200 text-stone-400 hover:text-[#004449] hover:border-stone-300'}`}>
-                    <Bell size={11} />
-                    <span className="w-4 h-4 rounded-full bg-[#0D9488] text-white text-[8px] font-bold flex items-center justify-center">{savedSearches.length}</span>
+                    className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all ${showSaved ? 'bg-[#004449] text-white border-[#004449]' : 'border-stone-200 text-stone-500 hover:border-[#004449]/30 hover:text-[#004449] hover:bg-[#004449]/[0.04]'}`}>
+                    <Bell size={13} />
+                    <span className={`w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center ${showSaved ? 'bg-white/20 text-white' : 'bg-[#0D9488] text-white'}`}>{savedSearches.length}</span>
                   </button>
                 )}
 
-                {/* Map / Grid toggle */}
-                <div className="flex items-center bg-stone-100 rounded-lg p-0.5">
+                {/* Map / Grid segmented toggle */}
+                <div className="flex items-center bg-stone-100 rounded-xl p-0.5 gap-0.5">
                   <button onClick={() => setShowMap(true)}
-                    className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
-                    <Map size={11} /><span className="hidden sm:block">Map</span>
+                    className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
+                    <Map size={12} /><span className="hidden sm:block">Map</span>
                   </button>
                   <button onClick={() => setShowMap(false)}
-                    className={`flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-md transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
-                    <LayoutGrid size={11} /><span className="hidden sm:block">Grid</span>
+                    className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
+                    <LayoutGrid size={12} /><span className="hidden sm:block">Grid</span>
                   </button>
                 </div>
               </div>
@@ -802,18 +801,21 @@ function GreenSelect({ label, value, onChange, options }) {
 
 function FilterPill({ label, value, onChange, options }) {
   const isActive = value !== options[0].v
+  const displayVal = options.find(o => o.v === value)?.l ?? value
   return (
-    <div className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 cursor-pointer transition-all shrink-0 border ${isActive ? 'bg-[#004449] border-[#004449]' : 'bg-stone-50 border-stone-200 hover:border-stone-300'}`}>
-      <span className={`text-[10px] font-semibold ${isActive ? 'text-white/60' : 'text-stone-400'}`}>{label}:</span>
+    <div className={`relative inline-flex flex-col justify-center rounded-xl px-3.5 py-2 cursor-pointer transition-all shrink-0 border min-w-[72px] ${isActive ? 'bg-[#004449] border-[#004449] shadow-sm' : 'bg-stone-50 border-stone-200 hover:border-[#004449]/30 hover:bg-white'}`}>
+      <p className={`text-[9px] font-bold uppercase tracking-[0.1em] leading-none mb-1 ${isActive ? 'text-white/50' : 'text-stone-400'}`}>{label}</p>
+      <div className="flex items-center gap-1">
+        <p className={`text-[13px] font-bold leading-none truncate ${isActive ? 'text-white' : 'text-[#004449]'}`}>{displayVal}</p>
+        <ChevronDown size={10} className={`shrink-0 ${isActive ? 'text-white/50' : 'text-stone-400'}`} />
+      </div>
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        className={`bg-transparent text-[10px] font-bold outline-none cursor-pointer ${isActive ? 'text-white' : 'text-stone-700'}`}
-        style={{ appearance: 'none' }}
+        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
       >
         {options.map(o => <option key={o.v} value={o.v} className="text-stone-900 bg-white">{o.l}</option>)}
       </select>
-      <ChevronDown size={8} className={isActive ? 'text-white/50' : 'text-stone-300'} />
     </div>
   )
 }
@@ -873,13 +875,15 @@ function PriceFilter({ priceRange, onChange }) {
     <div ref={ref} className="relative shrink-0">
       <div
         onClick={() => setOpen(!open)}
-        className={`inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 cursor-pointer transition-all border ${isFiltered ? 'bg-[#004449] border-[#004449]' : 'bg-stone-50 border-stone-200 hover:border-stone-300'}`}
+        className={`inline-flex flex-col justify-center rounded-xl px-3.5 py-2 cursor-pointer transition-all border min-w-[72px] ${isFiltered ? 'bg-[#004449] border-[#004449] shadow-sm' : 'bg-stone-50 border-stone-200 hover:border-[#004449]/30 hover:bg-white'}`}
       >
-        <span className={`text-[10px] font-semibold ${isFiltered ? 'text-white/60' : 'text-stone-400'}`}>Price:</span>
-        <span className={`text-[10px] font-bold ${isFiltered ? 'text-white' : 'text-stone-700'}`}>
-          {isFiltered ? `${fmtK(minVal)}–${fmtK(maxVal)}` : 'Any'}
-        </span>
-        <ChevronDown size={8} className={isFiltered ? 'text-white/50' : 'text-stone-300'} />
+        <p className={`text-[9px] font-bold uppercase tracking-[0.1em] leading-none mb-1 ${isFiltered ? 'text-white/50' : 'text-stone-400'}`}>Price</p>
+        <div className="flex items-center gap-1">
+          <span className={`text-[13px] font-bold leading-none truncate ${isFiltered ? 'text-white' : 'text-[#004449]'}`}>
+            {isFiltered ? `${fmtK(minVal)}–${fmtK(maxVal)}` : 'Any'}
+          </span>
+          <ChevronDown size={10} className={`shrink-0 ${isFiltered ? 'text-white/50' : 'text-stone-400'}`} />
+        </div>
       </div>
       {open && (
         <div className="absolute top-full left-0 mt-1.5 w-52 bg-white border border-stone-200 rounded-xl shadow-xl z-[60] p-3">
