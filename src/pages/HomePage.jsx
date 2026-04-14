@@ -242,7 +242,7 @@ export default function HomePage() {
         {/* Floating filter bar */}
         <div className="fixed top-[58px] left-0 right-0 z-40 px-4 md:px-8 py-2.5 pointer-events-none">
           <div className="max-w-5xl mx-auto pointer-events-auto search-bar-enter space-y-2">
-            <div className="bg-white/98 backdrop-blur-md rounded-2xl shadow-[0_4px_24px_rgba(0,68,73,0.10)] border border-stone-200/70 px-3 py-2 flex items-center gap-1.5">
+            <div className="bg-[#004449] rounded-2xl shadow-[0_4px_28px_rgba(0,68,73,0.35)] px-3 py-2 flex items-center gap-1.5">
 
               {/* Filter pills */}
               <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
@@ -257,26 +257,26 @@ export default function HomePage() {
                 <PriceFilter priceRange={priceRange} onChange={setPriceRange} />
               </div>
 
-              <div className="w-px h-8 shrink-0" style={{ backgroundColor: '#e7e5e4' }} />
+              <div className="w-px h-8 shrink-0 bg-white/15" />
 
               {/* Right actions */}
               <div className="flex items-center gap-1.5 shrink-0">
 
                 {/* Save button */}
                 <button onClick={saveSearch}
-                  className={`flex items-center gap-1.5 text-[11px] font-semibold px-3 py-2 rounded-xl border transition-all ${savedMsg ? 'bg-[#0D9488]/10 text-[#0D9488] border-[#0D9488]/25' : 'border-stone-200 text-stone-500 hover:border-[#004449]/30 hover:text-[#004449] hover:bg-[#004449]/[0.04]'}`}>
+                  className={`flex items-center gap-1.5 text-[11px] font-semibold px-3 py-2 rounded-xl bg-white transition-all ${savedMsg ? 'text-[#0D9488]' : 'text-[#004449] hover:bg-white/90'}`}>
                   <BookmarkPlus size={12} />
                   <span className="hidden sm:block">{savedMsg ? 'Saved!' : 'Save'}</span>
                 </button>
 
                 {/* Map / Grid segmented toggle */}
-                <div className="flex items-center bg-stone-100 rounded-xl p-0.5">
+                <div className="flex items-center bg-white/10 rounded-xl p-0.5">
                   <button onClick={() => setShowMap(true)}
-                    className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
+                    className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-white/60 hover:text-white'}`}>
                     <Map size={12} /><span className="hidden sm:block">Map</span>
                   </button>
                   <button onClick={() => setShowMap(false)}
-                    className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
+                    className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-white/60 hover:text-white'}`}>
                     <LayoutGrid size={12} /><span className="hidden sm:block">Grid</span>
                   </button>
                 </div>
@@ -783,11 +783,11 @@ function FilterPill({ label, value, onChange, options }) {
   const isActive = value !== options[0].v
   const displayVal = options.find(o => o.v === value)?.l ?? value
   return (
-    <div className={`relative inline-flex flex-col justify-center rounded-xl px-3.5 py-2 cursor-pointer transition-all shrink-0 border min-w-[72px] ${isActive ? 'bg-[#004449] border-[#004449] shadow-sm' : 'bg-stone-50 border-stone-200 hover:border-[#004449]/30 hover:bg-white'}`}>
-      <p className={`text-[9px] font-bold uppercase tracking-[0.1em] leading-none mb-1 ${isActive ? 'text-white/50' : 'text-stone-400'}`}>{label}</p>
+    <div className="relative inline-flex flex-col justify-center rounded-xl px-3.5 py-2 cursor-pointer transition-all shrink-0 min-w-[72px] bg-white hover:bg-white/90">
+      <p className="text-[9px] font-bold uppercase tracking-[0.1em] leading-none mb-1 text-stone-400">{label}</p>
       <div className="flex items-center gap-1">
-        <p className={`text-[13px] font-bold leading-none truncate ${isActive ? 'text-white' : 'text-[#004449]'}`}>{displayVal}</p>
-        <ChevronDown size={10} className={`shrink-0 ${isActive ? 'text-white/50' : 'text-stone-400'}`} />
+        <p className={`text-[13px] font-bold leading-none truncate ${isActive ? 'text-[#004449]' : 'text-stone-400'}`}>{displayVal}</p>
+        <ChevronDown size={10} className="shrink-0 text-stone-400" />
       </div>
       <select
         value={value}
@@ -855,14 +855,14 @@ function PriceFilter({ priceRange, onChange }) {
     <div ref={ref} className="relative shrink-0">
       <div
         onClick={() => setOpen(!open)}
-        className={`inline-flex flex-col justify-center rounded-xl px-3.5 py-2 cursor-pointer transition-all border min-w-[72px] ${isFiltered ? 'bg-[#004449] border-[#004449] shadow-sm' : 'bg-stone-50 border-stone-200 hover:border-[#004449]/30 hover:bg-white'}`}
+        className="inline-flex flex-col justify-center rounded-xl px-3.5 py-2 cursor-pointer transition-all min-w-[72px] bg-white hover:bg-white/90"
       >
-        <p className={`text-[9px] font-bold uppercase tracking-[0.1em] leading-none mb-1 ${isFiltered ? 'text-white/50' : 'text-stone-400'}`}>Price</p>
+        <p className="text-[9px] font-bold uppercase tracking-[0.1em] leading-none mb-1 text-stone-400">Price</p>
         <div className="flex items-center gap-1">
-          <span className={`text-[13px] font-bold leading-none truncate ${isFiltered ? 'text-white' : 'text-[#004449]'}`}>
+          <span className={`text-[13px] font-bold leading-none truncate ${isFiltered ? 'text-[#004449]' : 'text-stone-400'}`}>
             {isFiltered ? `${fmtK(minVal)}–${fmtK(maxVal)}` : 'Any'}
           </span>
-          <ChevronDown size={10} className={`shrink-0 ${isFiltered ? 'text-white/50' : 'text-stone-400'}`} />
+          <ChevronDown size={10} className="shrink-0 text-stone-400" />
         </div>
       </div>
       {open && (
