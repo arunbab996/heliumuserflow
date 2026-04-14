@@ -109,10 +109,10 @@ function loadSearchState() {
 
 export default function HomePage() {
   const navigate = useNavigate()
-  const location = useLocation()
+  const routeLocation = useLocation()
 
   // Only restore search state when navigating back (not on fresh page load)
-  const isBack = location.key !== 'default'
+  const isBack = routeLocation.key !== 'default'
   const _s = isBack ? loadSearchState() : null
   if (!isBack) sessionStorage.removeItem('hf_search_state')
 
