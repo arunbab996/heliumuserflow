@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Search, Sparkles, ChevronDown, Map, LayoutGrid, X, ArrowRight, CheckCircle, BadgeCheck, CalendarCheck, Banknote, MapPin, BookmarkPlus, Bell } from 'lucide-react'
+import { Search, Sparkles, ChevronDown, Map, LayoutGrid, X, ArrowRight, CheckCircle, BadgeCheck, CalendarCheck, Banknote, MapPin, BookmarkPlus } from 'lucide-react'
 import Navbar from '../components/Navbar'
 import MapView from '../components/MapView'
 import ListingCard from '../components/ListingCard'
@@ -242,20 +242,27 @@ export default function HomePage() {
         {/* Floating filter bar */}
         <div className="fixed top-[58px] left-0 right-0 z-40 px-4 md:px-8 py-2.5 pointer-events-none">
           <div className="max-w-5xl mx-auto pointer-events-auto search-bar-enter space-y-2">
-            <div className="bg-white/98 backdrop-blur-md rounded-2xl shadow-[0_4px_24px_rgba(0,68,73,0.10)] border border-stone-200/70 px-4 py-2.5 flex items-center gap-3">
+            <div className="bg-white/98 backdrop-blur-md rounded-2xl shadow-[0_4px_24px_rgba(0,68,73,0.10)] border border-stone-200/70 px-3 py-2 flex items-center gap-2">
 
-              {/* Live count — left anchor */}
-              <div className="flex items-center gap-2.5 shrink-0">
-                <span className="w-2 h-2 rounded-full bg-[#0D9488] animate-pulse shrink-0" />
-                <div className="hidden md:block">
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest leading-none mb-0.5">Live</p>
-                  <p className="text-sm font-bold text-[#004449] leading-none">{(filteredResults || []).length} homes</p>
-                </div>
-              </div>
+              {/* Search context chip — left anchor */}
+              <button
+                onClick={clearSearch}
+                className="group flex items-center gap-2 shrink-0 bg-[#004449]/[0.06] hover:bg-red-50 border border-[#004449]/10 hover:border-red-200/80 rounded-xl px-3 py-2 transition-all duration-200 max-w-[180px]"
+                title="New search"
+              >
+                {describeActive
+                  ? <Sparkles size={11} className="shrink-0 text-[#0D9488] group-hover:text-red-400 transition-colors" />
+                  : <Search   size={11} className="shrink-0 text-[#0D9488] group-hover:text-red-400 transition-colors" />
+                }
+                <span className="text-[11px] font-semibold text-[#004449] group-hover:text-red-500 truncate transition-colors leading-none">
+                  {searchLabel || 'All homes'}
+                </span>
+                <X size={10} className="shrink-0 text-[#004449]/30 group-hover:text-red-400 transition-colors" />
+              </button>
 
-              <div className="w-px h-8 bg-stone-150 shrink-0" style={{ backgroundColor: '#e7e5e4' }} />
+              <div className="w-px h-8 shrink-0" style={{ backgroundColor: '#e7e5e4' }} />
 
-              {/* Filter pills — two-line: label above, value below */}
+              {/* Filter pills */}
               <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
                 <FilterPill label="Area"   value={rfLocation} onChange={setRfLocation} options={[
                   { v:'all', l:'Anywhere' }, { v:'whitefield', l:'Whitefield' },
@@ -271,32 +278,34 @@ export default function HomePage() {
               <div className="w-px h-8 shrink-0" style={{ backgroundColor: '#e7e5e4' }} />
 
               {/* Right actions */}
-              <div className="flex items-center gap-2 shrink-0">
+              <div className="flex items-center gap-1.5 shrink-0">
 
-                {/* Save search */}
+                {/* Save button */}
                 <button onClick={saveSearch}
-                  className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all ${savedMsg ? 'bg-[#0D9488]/10 text-[#0D9488] border-[#0D9488]/25' : 'border-stone-200 text-stone-500 hover:border-[#004449]/30 hover:text-[#004449] hover:bg-[#004449]/[0.04]'}`}>
-                  <BookmarkPlus size={13} />
+                  className={`flex items-center gap-1.5 text-[11px] font-semibold px-3 py-2 rounded-xl border transition-all ${savedMsg ? 'bg-[#0D9488]/10 text-[#0D9488] border-[#0D9488]/25' : 'border-stone-200 text-stone-500 hover:border-[#004449]/30 hover:text-[#004449] hover:bg-[#004449]/[0.04]'}`}>
+                  <BookmarkPlus size={12} />
                   <span className="hidden sm:block">{savedMsg ? 'Saved!' : 'Save'}</span>
                 </button>
 
-                {/* Saved searches */}
+                {/* Saved searches count — toggles the panel */}
                 {savedSearches.length > 0 && (
-                  <button onClick={() => setShowSaved(!showSaved)}
-                    className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-2 rounded-xl border transition-all ${showSaved ? 'bg-[#004449] text-white border-[#004449]' : 'border-stone-200 text-stone-500 hover:border-[#004449]/30 hover:text-[#004449] hover:bg-[#004449]/[0.04]'}`}>
-                    <Bell size={13} />
-                    <span className={`w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center ${showSaved ? 'bg-white/20 text-white' : 'bg-[#0D9488] text-white'}`}>{savedSearches.length}</span>
+                  <button
+                    onClick={() => setShowSaved(s => !s)}
+                    className={`w-6 h-6 rounded-full text-[9px] font-bold flex items-center justify-center transition-all ${showSaved ? 'bg-[#004449] text-white' : 'bg-[#0D9488] text-white hover:bg-[#004449]'}`}
+                    title="Saved searches"
+                  >
+                    {savedSearches.length}
                   </button>
                 )}
 
                 {/* Map / Grid segmented toggle */}
-                <div className="flex items-center bg-stone-100 rounded-xl p-0.5 gap-0.5">
+                <div className="flex items-center bg-stone-100 rounded-xl p-0.5">
                   <button onClick={() => setShowMap(true)}
-                    className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
+                    className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
                     <Map size={12} /><span className="hidden sm:block">Map</span>
                   </button>
                   <button onClick={() => setShowMap(false)}
-                    className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
+                    className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-stone-400 hover:text-stone-600'}`}>
                     <LayoutGrid size={12} /><span className="hidden sm:block">Grid</span>
                   </button>
                 </div>
