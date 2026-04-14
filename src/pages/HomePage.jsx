@@ -239,100 +239,100 @@ export default function HomePage() {
       <div className="min-h-screen bg-stone-50" style={{ fontFamily: "'DM Sans', sans-serif" }}>
         <Navbar variant="home" />
 
-        {/* Floating filter bar */}
-        <div className="fixed top-[58px] left-0 right-0 z-40 px-4 md:px-8 py-2.5 pointer-events-none">
-          <div className="max-w-5xl mx-auto pointer-events-auto search-bar-enter space-y-2">
-            <div className="bg-[#004449] rounded-2xl shadow-[0_4px_28px_rgba(0,68,73,0.35)] px-3 py-2 flex items-center gap-1.5">
+        {/* Fixed header + filter bar — count on top, pills below */}
+        <div className="fixed top-[58px] left-0 right-0 z-40 bg-[#004449] shadow-[0_4px_24px_rgba(0,68,73,0.3)]">
 
-              {/* Filter pills — scrollable row (no overflow clip on Price dropdown) */}
-              <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
-                <FilterPill label="Area"   value={rfLocation} onChange={setRfLocation} options={[
-                  { v:'all', l:'Anywhere' }, { v:'whitefield', l:'Whitefield' },
-                  { v:'varthur', l:'Varthur' }, { v:'hoodi', l:'Hoodi' }, { v:'panathur', l:'Panathur' },
-                ]} />
-                <FilterPill label="Layout" value={rfLayout}   onChange={setRfLayout}   options={[
-                  { v:'all', l:'Any' }, { v:'2 BHK', l:'2 BHK' }, { v:'3 BHK', l:'3 BHK' }, { v:'4 BHK', l:'4 BHK' },
-                ]} />
-                <FilterPill label="When"   value={rfAvail}    onChange={setRfAvail}    options={MOVEIN_OPTIONS} />
+          {/* Row 1 — homes count + close */}
+          <div className="px-5 md:px-8 pt-4 pb-3 search-bar-enter">
+            <div className="max-w-5xl mx-auto flex items-end justify-between">
+              <div>
+                {describeActive && (
+                  <p className="flex items-center gap-1.5 text-[11px] text-[#0D9488] font-medium mb-1.5">
+                    <Sparkles size={10} />
+                    <span className="italic opacity-80">"{searchLabel.length > 55 ? searchLabel.slice(0,55)+'...' : searchLabel}"</span>
+                  </p>
+                )}
+                <h2 className="text-2xl md:text-3xl font-light text-white leading-none" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                  {(filteredResults || []).length} home{(filteredResults || []).length !== 1 ? 's' : ''}{' '}
+                  <em className="italic font-semibold">{describeActive ? 'matched.' : 'found.'}</em>
+                </h2>
+                {!describeActive && (
+                  <p className="text-white/40 text-xs mt-1 font-medium">{searchLabel}</p>
+                )}
               </div>
-
-              {/* Price lives outside the overflow container so its dropdown isn't clipped */}
-              <PriceFilter priceRange={priceRange} onChange={setPriceRange} />
-
-              <div className="w-px h-8 shrink-0 bg-white/15" />
-
-              {/* Right actions */}
-              <div className="flex items-center gap-1.5 shrink-0">
-
-                {/* Save button */}
-                <button onClick={saveSearch}
-                  className={`flex items-center gap-1.5 text-[11px] font-semibold px-3 py-2 rounded-xl bg-white transition-all ${savedMsg ? 'text-[#0D9488]' : 'text-[#004449] hover:bg-white/90'}`}>
-                  <BookmarkPlus size={12} />
-                  <span className="hidden sm:block">{savedMsg ? 'Saved!' : 'Save'}</span>
-                </button>
-
-                {/* Map / Grid segmented toggle */}
-                <div className="flex items-center bg-white/10 rounded-xl p-0.5">
-                  <button onClick={() => setShowMap(true)}
-                    className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-white/60 hover:text-white'}`}>
-                    <Map size={12} /><span className="hidden sm:block">Map</span>
-                  </button>
-                  <button onClick={() => setShowMap(false)}
-                    className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-white/60 hover:text-white'}`}>
-                    <LayoutGrid size={12} /><span className="hidden sm:block">Grid</span>
-                  </button>
-                </div>
-              </div>
+              <button
+                onClick={clearSearch}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition-all shrink-0"
+              >
+                <X size={12} /> Close search
+              </button>
             </div>
+          </div>
 
-            {/* Saved Searches panel */}
-            {showSaved && savedSearches.length > 0 && (
-              <div className="bg-white border border-stone-200 rounded-xl shadow-xl p-3">
-                <div className="flex items-center justify-between mb-2.5">
-                  <p className="text-[9px] font-bold text-stone-400 uppercase tracking-widest">Saved Searches</p>
-                  <button onClick={() => setShowSaved(false)} className="text-stone-300 hover:text-stone-500 transition-colors">
-                    <X size={11} />
-                  </button>
+          {/* Row 2 — filter bar */}
+          <div className="px-3 md:px-8 pb-2.5 pointer-events-none">
+            <div className="max-w-5xl mx-auto pointer-events-auto">
+              <div className="bg-white/[0.07] rounded-2xl px-3 py-2 flex items-center gap-1.5">
+
+                {/* Filter pills */}
+                <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
+                  <FilterPill label="Area"   value={rfLocation} onChange={setRfLocation} options={[
+                    { v:'all', l:'Anywhere' }, { v:'whitefield', l:'Whitefield' },
+                    { v:'varthur', l:'Varthur' }, { v:'hoodi', l:'Hoodi' }, { v:'panathur', l:'Panathur' },
+                  ]} />
+                  <FilterPill label="Layout" value={rfLayout}   onChange={setRfLayout}   options={[
+                    { v:'all', l:'Any' }, { v:'2 BHK', l:'2 BHK' }, { v:'3 BHK', l:'3 BHK' }, { v:'4 BHK', l:'4 BHK' },
+                  ]} />
+                  <FilterPill label="When"   value={rfAvail}    onChange={setRfAvail}    options={MOVEIN_OPTIONS} />
                 </div>
-                <div className="flex gap-2 overflow-x-auto no-scrollbar pb-0.5">
-                  {savedSearches.map(s => (
-                    <SavedSearchCard key={s.id} search={s} onView={() => applySearch(s)} onDelete={() => deleteSavedSearch(s.id)} />
-                  ))}
+
+                {/* Price outside overflow so its dropdown isn't clipped */}
+                <PriceFilter priceRange={priceRange} onChange={setPriceRange} />
+
+                <div className="w-px h-8 shrink-0 bg-white/15" />
+
+                {/* Right actions */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button onClick={saveSearch}
+                    className={`flex items-center gap-1.5 text-[11px] font-semibold px-3 py-2 rounded-xl bg-white transition-all ${savedMsg ? 'text-[#0D9488]' : 'text-[#004449] hover:bg-white/90'}`}>
+                    <BookmarkPlus size={12} />
+                    <span className="hidden sm:block">{savedMsg ? 'Saved!' : 'Save'}</span>
+                  </button>
+                  <div className="flex items-center bg-white/10 rounded-xl p-0.5">
+                    <button onClick={() => setShowMap(true)}
+                      className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-white/60 hover:text-white'}`}>
+                      <Map size={12} /><span className="hidden sm:block">Map</span>
+                    </button>
+                    <button onClick={() => setShowMap(false)}
+                      className={`flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-all ${!showMap ? 'bg-white text-[#004449] shadow-sm' : 'text-white/60 hover:text-white'}`}>
+                      <LayoutGrid size={12} /><span className="hidden sm:block">Grid</span>
+                    </button>
+                  </div>
                 </div>
               </div>
-            )}
+
+              {/* Saved Searches panel */}
+              {showSaved && savedSearches.length > 0 && (
+                <div className="mt-1.5 bg-[#003538] border border-white/10 rounded-xl p-3">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest">Saved Searches</p>
+                    <button onClick={() => setShowSaved(false)} className="text-white/20 hover:text-white/50 transition-colors">
+                      <X size={11} />
+                    </button>
+                  </div>
+                  <div className="flex gap-2 overflow-x-auto no-scrollbar pb-0.5">
+                    {savedSearches.map(s => (
+                      <SavedSearchCard key={s.id} search={s} onView={() => applySearch(s)} onDelete={() => deleteSavedSearch(s.id)} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Green header banner */}
-        <div className="bg-[#004449] pt-[68px] pb-8 px-5 search-page-enter">
-          <div className="max-w-screen-xl mx-auto flex items-end justify-between">
-            <div>
-              {describeActive && (
-                <p className="flex items-center gap-1.5 text-xs text-[#0D9488] font-medium mb-2">
-                  <Sparkles size={11} />
-                  <span className="italic opacity-80">"{searchLabel.length > 55 ? searchLabel.slice(0,55)+'...' : searchLabel}"</span>
-                </p>
-              )}
-              <h2 className="text-3xl md:text-4xl font-light text-white leading-tight" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                {(filteredResults || []).length} home{(filteredResults || []).length !== 1 ? 's' : ''}{' '}
-                <em className="italic font-semibold">{describeActive ? 'matched.' : 'found.'}</em>
-              </h2>
-              {!describeActive && (
-                <p className="text-white/40 text-sm mt-1 font-medium">{searchLabel}</p>
-              )}
-            </div>
-            <button
-              onClick={clearSearch}
-              className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/15 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
-            >
-              <X size={14} /> Close search
-            </button>
-          </div>
-        </div>
-
-        {/* Results */}
-        <div className="max-w-screen-xl mx-auto px-5 py-8 search-page-enter">
+        {/* Results — top padding clears navbar + count header + filter bar */}
+        <div className="max-w-screen-xl mx-auto px-5 pb-16 search-page-enter" style={{ paddingTop: '10rem' }}>
           {showMap && (
             <div className="rounded-2xl overflow-hidden mb-7 border border-stone-200 shadow-sm" style={{ height: 380 }}>
               <MapView
