@@ -244,7 +244,7 @@ export default function HomePage() {
           <div className="max-w-5xl mx-auto pointer-events-auto search-bar-enter space-y-2">
             <div className="bg-[#004449] rounded-2xl shadow-[0_4px_28px_rgba(0,68,73,0.35)] px-3 py-2 flex items-center gap-1.5">
 
-              {/* Filter pills */}
+              {/* Filter pills — scrollable row (no overflow clip on Price dropdown) */}
               <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
                 <FilterPill label="Area"   value={rfLocation} onChange={setRfLocation} options={[
                   { v:'all', l:'Anywhere' }, { v:'whitefield', l:'Whitefield' },
@@ -254,8 +254,10 @@ export default function HomePage() {
                   { v:'all', l:'Any' }, { v:'2 BHK', l:'2 BHK' }, { v:'3 BHK', l:'3 BHK' }, { v:'4 BHK', l:'4 BHK' },
                 ]} />
                 <FilterPill label="When"   value={rfAvail}    onChange={setRfAvail}    options={MOVEIN_OPTIONS} />
-                <PriceFilter priceRange={priceRange} onChange={setPriceRange} />
               </div>
+
+              {/* Price lives outside the overflow container so its dropdown isn't clipped */}
+              <PriceFilter priceRange={priceRange} onChange={setPriceRange} />
 
               <div className="w-px h-8 shrink-0 bg-white/15" />
 
