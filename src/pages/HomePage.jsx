@@ -242,25 +242,7 @@ export default function HomePage() {
         {/* Floating filter bar */}
         <div className="fixed top-[58px] left-0 right-0 z-40 px-4 md:px-8 py-2.5 pointer-events-none">
           <div className="max-w-5xl mx-auto pointer-events-auto search-bar-enter space-y-2">
-            <div className="bg-white/98 backdrop-blur-md rounded-2xl shadow-[0_4px_24px_rgba(0,68,73,0.10)] border border-stone-200/70 px-3 py-2 flex items-center gap-2">
-
-              {/* Search context chip — left anchor */}
-              <button
-                onClick={clearSearch}
-                className="group flex items-center gap-2 shrink-0 bg-[#004449]/[0.06] hover:bg-red-50 border border-[#004449]/10 hover:border-red-200/80 rounded-xl px-3 py-2 transition-all duration-200 max-w-[180px]"
-                title="New search"
-              >
-                {describeActive
-                  ? <Sparkles size={11} className="shrink-0 text-[#0D9488] group-hover:text-red-400 transition-colors" />
-                  : <Search   size={11} className="shrink-0 text-[#0D9488] group-hover:text-red-400 transition-colors" />
-                }
-                <span className="text-[11px] font-semibold text-[#004449] group-hover:text-red-500 truncate transition-colors leading-none">
-                  {searchLabel || 'All homes'}
-                </span>
-                <X size={10} className="shrink-0 text-[#004449]/30 group-hover:text-red-400 transition-colors" />
-              </button>
-
-              <div className="w-px h-8 shrink-0" style={{ backgroundColor: '#e7e5e4' }} />
+            <div className="bg-white/98 backdrop-blur-md rounded-2xl shadow-[0_4px_24px_rgba(0,68,73,0.10)] border border-stone-200/70 px-3 py-2 flex items-center gap-1.5">
 
               {/* Filter pills */}
               <div className="flex items-center gap-1.5 flex-1 overflow-x-auto no-scrollbar">
@@ -286,17 +268,6 @@ export default function HomePage() {
                   <BookmarkPlus size={12} />
                   <span className="hidden sm:block">{savedMsg ? 'Saved!' : 'Save'}</span>
                 </button>
-
-                {/* Saved searches count — toggles the panel */}
-                {savedSearches.length > 0 && (
-                  <button
-                    onClick={() => setShowSaved(s => !s)}
-                    className={`w-6 h-6 rounded-full text-[9px] font-bold flex items-center justify-center transition-all ${showSaved ? 'bg-[#004449] text-white' : 'bg-[#0D9488] text-white hover:bg-[#004449]'}`}
-                    title="Saved searches"
-                  >
-                    {savedSearches.length}
-                  </button>
-                )}
 
                 {/* Map / Grid segmented toggle */}
                 <div className="flex items-center bg-stone-100 rounded-xl p-0.5">
